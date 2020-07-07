@@ -1,17 +1,10 @@
-from app import db, login
-from hashlib import md5
 from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin
+from hashlib import md5
 from time import time
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
-from app import app
-
-
-# ---------------------------------------------------------------------------- #
-@login.user_loader
-def load_user(id):
-    return User.query.get(int(id))
+from app import app, db, login
 
 
 followers = db.Table(
@@ -36,7 +29,7 @@ class User(UserMixin, db.Model):
         backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
 
     def __repr__(self):
-        return f"<User {self.username}>"
+        return '<User {}>'.format(self.username)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -46,7 +39,8 @@ class User(UserMixin, db.Model):
 
     def avatar(self, size):
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
-        return f"https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}"
+        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
+            digest, size)
 
     def follow(self, user):
         if not self.is_following(user):
@@ -82,6 +76,11 @@ class User(UserMixin, db.Model):
         return User.query.get(id)
 
 
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
+
+
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(140))
@@ -89,4 +88,4 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
-        return f"<Post {self.body}>"
+        return '<Post {}>'.format(self.body)
