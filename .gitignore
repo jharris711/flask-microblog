@@ -5,3 +5,4 @@ __pycache__/
 *.code-workspace
 *.db
 *.sqlite3
+.env
