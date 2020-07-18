@@ -1,0 +1,13 @@
+*.env
+*.env.twitter
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+/node_modules
+node_modules/
+.DS_Store
+*.db
+*.sqlite3
+*.code-workspace
